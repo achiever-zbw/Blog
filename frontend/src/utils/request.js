@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useUserStore } from '@/stores'
 
 //设置请求的基地址
-const baseURL = 'http:127.0.0.1:8000'
+const baseURL = 'http://127.0.0.1:8000'
 
 //创建axios实例
 const instance = axios.create({
