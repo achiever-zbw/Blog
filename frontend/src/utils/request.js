@@ -1,8 +1,9 @@
 import axios from 'axios'
 import { useUserStore } from '@/stores'
+import { ElMessage  } from 'element-plus'
 
 //设置请求的基地址
-const baseURL = 'https:127.0.0.1:8000'
+const baseURL = 'http://10.25.205.131:8000'
 
 //创建axios实例
 const instance = axios.create({
@@ -27,11 +28,18 @@ instance.interceptors.request.use(
 
 //响应拦截器
 instance.interceptors.response.use(
-    res => {
-        return res
+    res => { 
+        if (res.data.code >= 400){
+            console.log(res.data.message)
+            ElMessage.error(res.data.message)
+        }
+        else
+            return res.data
     },
     error => {
-        return Promise.reject(error)
+        console.log(error)
+        ElMessage.error('网连接错误，请稍后再试')
+        return new Error(error)
     }
 )
 

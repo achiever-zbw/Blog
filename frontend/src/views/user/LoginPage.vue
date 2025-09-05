@@ -1,34 +1,84 @@
 <script setup>
-    import { ref, watch  } from 'vue'
+    import { ref, watch } from 'vue'
     import { useUserStore } from '@/stores'
-    import { login_api } from '@/api/login'
-    
+    import { login_api, signup_api } from '@/api/login'
+    import LoaderA from '@/components/svg/LoaderA.vue'
 
+    //// 登录部分
+    // 存储登录的信息
     const login_form_data = ref({
         username: '',
         password: ''
     })
+    //登录表单对象
     const login_form = ref('')
-
+    //登录函数
     const login = async () => {
         if (!check_login())
             return
         else{
+            //登录时打开加载动画，节流
+            const loading_instance = ElLoading.service({
+              text: '登录中...',
+              background: 'rgba(0, 0, 0, 0.2)',
+            })
+            //登录接口，发送请求
             const res = await login_api(login_form_data.value)
+            //等到有了结果后就关闭加载动画
+            loading_instance.close()
             console.log(res)
         }
-    } 
-
+    }
+    // 登录表单校验，通过返回ture，否则返回false
     const check_login = () => {
         if (login_form_data.value.username == ''){
+            ElMessage.error('用户名不能为空')
             return false
         }
         if (login_form_data.value.password == ''){
+            ElMessage.error('密码不能为空')
             return false
         }
         return true
     }
 
+    //// 注册部分
+    // 存储注册的信息
+    const signup_form_data = ref({
+        username: '',
+        password: ''
+    })
+    //注册表单对象
+    const signup_form = ref('')
+    //注册函数
+    const signup = async () => {
+        if (!check_signup())
+            return
+        else{
+            //注册时打开加载动画，节流
+            const loading_instance = ElLoading.service({
+              text: '注册中...',
+              background: 'rgba(0, 0, 0, 0.2)',
+            })
+            //注册接口，发送请求
+            const res = await signup_api(login_form_data.value)
+            //等到有了结果后就关闭加载动画
+            loading_instance.close()
+            console.log(res)
+        }
+    }
+    // 注册表单校验，通过返回ture，否则返回false
+    const check_signup = () => {
+        if (signup_form_data.value.username == ''){
+            ElMessage.error('用户名不能为空')
+            return false
+        }
+        if (signup_form_data.value.password == ''){
+            ElMessage.error('密码不能为空')
+            return false
+        }
+        return true
+    }
     
 
 </script>
@@ -67,18 +117,18 @@
                  <div class="flip-card__inner">
                     <div class="flip-card__front">
                        <div class="title">登录</div>
-                       <form class="flip-card__form" action=""  ref = "login_form" @submit.prevent="login()">
+                       <form class="flip-card__form" action=""  ref = "login_form" @submit.prevent = "login()">
                           <input class="flip-card__input" name="name" v-model="login_form_data.username" placeholder="用户名" type="name">
                           <input class="flip-card__input" name="password" v-model="login_form_data.password" placeholder="密码" type="password">
-                          <button class="flip-card__btn">确定</button>
+                          <button class="flip-card__btn" >确定</button >
                        </form>
                     </div>
                     <div class="flip-card__back">
                        <div class="title">注册</div>
-                       <form class="flip-card__form" action="">
-                          <input class="flip-card__input" placeholder="用户名" type="name">
-                          <input class="flip-card__input" name="password" placeholder="密码" type="password">
-                          <button class="flip-card__btn" @click="register()">提交</button>
+                       <form class="flip-card__form" action="" @submit.prevent = "signup()">
+                          <input class="flip-card__input" placeholder="用户名" type="name" v-model="signup_form_data.username" >
+                          <input class="flip-card__input" name="password" placeholder="密码" type="password" v-model="signup_form_data.password" >
+                          <button class="flip-card__btn">提交</button>
                        </form>
                     </div>
                  </div>
@@ -128,7 +178,7 @@
     .container {
         width: 100vw;
         height: 100vh;
-        position: fixed;
+        position: absolute;
         left: 0;
         top: 0;
         background: radial-gradient(
@@ -150,7 +200,7 @@
     --bg-color: #fff;
     --bg-color-alt: #666;
     --main-color: #323232;
-    position: fixed;
+    position: absolute;
     left: 50vw;
     top: 50vh;
     transform: translate(-50%, -50%);

@@ -8,6 +8,10 @@ export default defineConfig([
   {
     name: 'app/files-to-lint',
     files: ['**/*.{js,mjs,jsx,vue}'],
+    globals:{
+      ElMessage: 'readonly',
+      ElLoading: 'readonly',
+    }
   },
 
   globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
